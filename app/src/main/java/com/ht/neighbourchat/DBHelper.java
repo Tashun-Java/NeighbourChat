@@ -14,7 +14,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String USER_TABLE = "Users";
     public static String MESSAGE_ID;
     public static String MESSAGE_CONTENT;
-    private final Context context;
 
 
     @Override
@@ -41,7 +40,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private DBHelper(Context context) {
         super(context, USER_DATABASE, null, 1);
-        this.context = context;
     }
 
     public static synchronized DBHelper getInstance(Context context) {
