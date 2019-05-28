@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">NeighbourChat</string>
     <string name="title_item_detail">Item Detail</string>
+    <string name="new_connect">Connect to New</string>
+    <string name="paired_connect">Connect to Paired</string>
+
 </resources>
