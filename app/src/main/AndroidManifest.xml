@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED" />
+
 
     <application
         android:allowBackup="true"
@@ -17,15 +17,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity">
+            android:name=".ItemListActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
         <activity
             android:name=".ItemDetailActivity"
             android:label="@string/title_item_detail"
@@ -34,6 +34,11 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ht.neighbourchat.ItemListActivity" />
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="Device Discovery"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
 
