@@ -1,9 +1,20 @@
 package com.ht.neighbourchat.models;
 
+import java.util.ArrayList;
+
 public class User {
     private String uId;
     private String userName;
     private String lastSeen;
+    private ArrayList<Message> messages;
+
+    public void setMessages(ArrayList<Message> messages) {
+        this.messages = messages;
+    }
+
+    public ArrayList<Message> getMessages() {
+        return messages;
+    }
 
     public String getLastSeen() {
         return lastSeen;
