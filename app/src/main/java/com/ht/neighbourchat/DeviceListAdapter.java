@@ -8,8 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.ht.neighbourchat.R;
-
 import java.util.ArrayList;
 
 
@@ -30,9 +28,6 @@ public class DeviceListAdapter extends ArrayAdapter<BluetoothDevice> {
         convertView = mLayoutInflater.inflate(mViewResourceId, null);
 
         BluetoothDevice device = mDevices.get(position);
-
-
-
 
         if (device != null) {
             TextView deviceName = (TextView) convertView.findViewById(R.id.tvDeviceName);
