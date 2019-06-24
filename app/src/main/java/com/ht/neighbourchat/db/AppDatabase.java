@@ -11,9 +11,10 @@ import android.support.annotation.NonNull;
 import com.ht.neighbourchat.models.Message;
 import com.ht.neighbourchat.models.UserDoa;
 
-@Database(entities = {UserDoa.class, Message.class}, version = 1)
+@Database(entities = {UserDoa.class, Message.class}, version = 1,exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract AppDoa appDoa();
+//    public static Logger logger;
 
     private static AppDatabase INSTANCE;
 
@@ -28,6 +29,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
                 }
             }).build();
+//            logger.info(AppDatabase.class+": AppDatabase Created, in Memory Database");
         }
         return INSTANCE;
     }
@@ -45,11 +47,15 @@ public abstract class AppDatabase extends RoomDatabase {
                 }
             })
                     .build();
+//            logger.info(AppDatabase.class+": AppDatabase Created, in File Database");
+
         }
         return INSTANCE;
     }
 
     public static void destroyIntstance() {
         INSTANCE = null;
+//        logger.info(AppDatabase.class+": Instance was Destoryed");
+
     }
 }
