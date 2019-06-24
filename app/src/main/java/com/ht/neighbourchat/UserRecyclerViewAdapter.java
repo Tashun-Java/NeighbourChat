@@ -27,7 +27,7 @@ public class UserRecyclerViewAdapter
             if (mTwoPane) {
                 Context context = view.getContext();
                 Intent intent = new Intent(context, ItemDetailActivity.class);
-                intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, userDoa.getId());
+                intent.putExtra(ItemDetailActivity.ARG_ITEM_ID, userDoa.getId());
                 logger.info("Passed the User Id :" + userDoa.getId());
                 context.startActivity(intent);
 
@@ -36,7 +36,7 @@ public class UserRecyclerViewAdapter
             } else {
                 Context context = view.getContext();
                 Intent intent = new Intent(context, ItemDetailActivity.class);
-                intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, userDoa.getId());
+                intent.putExtra(ItemDetailActivity.ARG_ITEM_ID, userDoa.getId());
                 logger.info("Passed the User Id :" + userDoa.getId());
 
                 context.startActivity(intent);

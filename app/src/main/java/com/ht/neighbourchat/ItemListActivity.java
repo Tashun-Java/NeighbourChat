@@ -4,20 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.ht.neighbourchat.dummy.DummyContent;
+import com.ht.neighbourchat.db.AppDatabase;
+import com.ht.neighbourchat.db.DataHandler;
+import com.ht.neighbourchat.models.Message;
+import com.ht.neighbourchat.models.UserDoa;
 
 import java.util.List;
 
@@ -36,6 +37,7 @@ public class ItemListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mTwoPane;
+    private static AppDatabase appDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,8 @@ public class ItemListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
+        appDatabase = DataHandler.getAppDatabase(this);
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,18 +58,14 @@ public class ItemListActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
+        persist(this);
         if (findViewById(R.id.item_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
             mTwoPane = true;
         }
 
         View recyclerView = findViewById(R.id.item_list);
         assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+        getUsers((RecyclerView) recyclerView);
     }
 
     @Override
@@ -74,11 +74,12 @@ public class ItemListActivity extends AppCompatActivity {
         menuInflater.inflate(R.menu.menu, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.secure_connect_scan:
-                Intent intent = new Intent(this,MainActivity.class);
+                Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 return true;
 
@@ -86,77 +87,62 @@ public class ItemListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, DummyContent.ITEMS, mTwoPane));
+    private void setupRecyclerView(@NonNull RecyclerView recyclerView,List<UserDoa> users) {
+        recyclerView.setAdapter(new UserRecyclerViewAdapter(this,users , mTwoPane));
     }
 
-    public static class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
-
-        private final ItemListActivity mParentActivity;
-        private final List<DummyContent.DummyItem> mValues;
-        private final boolean mTwoPane;
-        private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
+    public void getUsers(@NonNull final RecyclerView recyclerView) {
+        new Thread(new Runnable() {
             @Override
-            public void onClick(View view) {
-                DummyContent.DummyItem item = (DummyContent.DummyItem) view.getTag();
-                if (mTwoPane) {
-                    Bundle arguments = new Bundle();
-                    arguments.putString(ItemDetailFragment.ARG_ITEM_ID, item.id);
-                    ItemDetailFragment fragment = new ItemDetailFragment();
-                    fragment.setArguments(arguments);
-                    mParentActivity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.item_detail_container, fragment)
-                            .commit();
-                } else {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, ItemDetailActivity.class);
-                    intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, item.id);
+            public void run() {
+                List<UserDoa> userDoas = appDatabase.appDoa().loadUsers();
+                System.out.println("Users number :"+userDoas.size());
+                setupRecyclerView(recyclerView,userDoas);
 
-                    context.startActivity(intent);
-                }
             }
-        };
+        }).start();
 
-        SimpleItemRecyclerViewAdapter(ItemListActivity parent,
-                                      List<DummyContent.DummyItem> items,
-                                      boolean twoPane) {
-            mValues = items;
-            mParentActivity = parent;
-            mTwoPane = twoPane;
-        }
-
-        @Override
-        @NonNull
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_list_content, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
-
-            holder.itemView.setTag(mValues.get(position));
-            holder.itemView.setOnClickListener(mOnClickListener);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mValues.size();
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            final TextView mIdView;
-            final TextView mContentView;
-
-            ViewHolder(View view) {
-                super(view);
-                mIdView = view.findViewById(R.id.id_text);
-                mContentView = view.findViewById(R.id.content);
-            }
-        }
     }
+
+    public void persist(final Context context) {
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+//                appDatabase = AppDatabase.getInMemoryDatabase(context);
+                for (int i = 0; i < 10; i++) {
+                    Message message = new Message();
+                    message.setId("0");
+                    message.setMessageContent("Message :" + i);
+                    message.setMessageId("12" + i);
+                    message.setSender("User Test0");
+                    message.setStatus(1);
+                    appDatabase.appDoa().addMessage(message);
+
+                }
+                List<Message> messages=appDatabase.appDoa().loadMessages();
+                System.out.println("Added!! "+messages.size());
+//                        Toast.makeText(v.getContext(), "The Uer got persisteted", Toast.LENGTH_LONG).show();
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+//                appDatabase = AppDatabase.getInMemoryDatabase(context);
+                for (int i = 0; i < 10; i++) {
+                    UserDoa userDoa = new UserDoa();
+                    userDoa.setUserName("User Test" + i);
+                    userDoa.setLastSeen("0" + i);
+                    userDoa.setId("" + i);
+                    appDatabase.appDoa().addUser(userDoa);
+                }
+                List<UserDoa>userDoas=appDatabase.appDoa().loadUsers();
+                System.out.println("Added!! "+userDoas.size());
+
+            }
+        }).start();
+    }
+
+
 }
