@@ -10,6 +10,7 @@ public class UserDoa {
 
     @PrimaryKey
     @ColumnInfo(name = "user-id")
+    @NonNull
     private String id;
     @ColumnInfo(name = "user-name")
     private String userName;
