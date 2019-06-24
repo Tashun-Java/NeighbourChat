@@ -12,6 +12,7 @@ public class Message {
 
     @PrimaryKey
     @ColumnInfo(name = "message-id")
+    @NonNull
     private String messageId;
 
     @ColumnInfo(name = "message-content")
